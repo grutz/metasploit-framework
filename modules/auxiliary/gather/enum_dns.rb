@@ -229,11 +229,11 @@ class Metasploit3 < Msf::Auxiliary
         @res.nameserver=(nssrv)
         @nsinuse = nssrv
       end
-      begin
-        query1 = @res.search("#{line.chomp}.#{target}")
-      rescue ArgumentError
+      if line.size > 63
+        print_error("Content longer than 63 characters, cannot resolve it: #{line}")
         next
       end
+      query1 = @res.search("#{line.chomp}.#{target}")
       if (query1)
         query1.answer.each do |rr|
           if rr.class == Net::DNS::RR::A
