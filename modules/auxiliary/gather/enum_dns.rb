@@ -229,7 +229,11 @@ class Metasploit3 < Msf::Auxiliary
         @res.nameserver=(nssrv)
         @nsinuse = nssrv
       end
-      query1 = @res.search("#{line.chomp}.#{target}")
+      begin
+        query1 = @res.search("#{line.chomp}.#{target}")
+      rescue ArgumentError
+        next
+      end
       if (query1)
         query1.answer.each do |rr|
           if rr.class == Net::DNS::RR::A

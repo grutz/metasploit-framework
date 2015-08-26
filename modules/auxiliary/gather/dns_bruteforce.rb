@@ -112,12 +112,16 @@ class Metasploit3 < Msf::Auxiliary
         tl << framework.threads.spawn("Module(#{self.refname})-#{domain}", false, queue.shift) do |testf|
           Thread.current.kill if not testf
           vprint_status("Testing #{testf}.#{domain}")
-          get_ip("#{testf}.#{domain}").each do |i|
-            print_good("Host #{i[:host]} with address #{i[:address]} found")
-            report_host(
-              :host => i[:address].to_s,
-              :name => i[:host].gsub(/\.$/,'')
-            )
+          begin
+            get_ip("#{testf}.#{domain}").each do |i|
+              print_good("Host #{i[:host]} with address #{i[:address]} found")
+              report_host(
+                :host => i[:address].to_s,
+                :name => i[:host].gsub(/\.$/,'')
+              )
+            end
+          rescue ArgumentError
+            next
           end
         end
       end
